@@ -1,7 +1,5 @@
 package org.springframework.cloud.gateway.config;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -25,6 +23,11 @@ import org.springframework.scripting.support.ResourceScriptSource;
 import org.springframework.validation.Validator;
 import org.springframework.web.reactive.DispatcherHandler;
 
+import java.util.List;
+
+/**
+ * spring gateway redis配置类
+ */
 @Configuration
 @AutoConfigureAfter(RedisReactiveAutoConfiguration.class)
 @AutoConfigureBefore(GatewayAutoConfiguration.class)
@@ -32,6 +35,11 @@ import org.springframework.web.reactive.DispatcherHandler;
 @ConditionalOnClass({RedisTemplate.class, DispatcherHandler.class})
 class GatewayRedisAutoConfiguration {
 
+	/**
+	 * 默认脚本配置是META-INF/scripts/request_rate_limiter.lua文件
+	 *
+	 * @return
+	 */
 	@Bean
 	@SuppressWarnings("unchecked")
 	public RedisScript redisRequestRateLimiterScript() {
@@ -41,12 +49,18 @@ class GatewayRedisAutoConfiguration {
 		return redisScript;
 	}
 
+	/**
+	 * 声明一个ReactiveRedisTemplate
+	 *
+	 * @param reactiveRedisConnectionFactory
+	 * @return
+	 */
 	@Bean
 	//TODO: replace with ReactiveStringRedisTemplate in future
 	public ReactiveRedisTemplate<String, String> stringReactiveRedisTemplate(
 			ReactiveRedisConnectionFactory reactiveRedisConnectionFactory) {
 		RedisSerializer<String> serializer = new StringRedisSerializer();
-		RedisSerializationContext<String , String> serializationContext = RedisSerializationContext
+		RedisSerializationContext<String, String> serializationContext = RedisSerializationContext
 				.<String, String>newSerializationContext()
 				.key(serializer)
 				.value(serializer)
@@ -57,6 +71,14 @@ class GatewayRedisAutoConfiguration {
 				serializationContext);
 	}
 
+	/**
+	 * 如果没有声明，默认会初始化一个RedisRateLimiter
+	 *
+	 * @param redisTemplate
+	 * @param redisScript
+	 * @param validator
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnMissingBean
 	public RedisRateLimiter redisRateLimiter(ReactiveRedisTemplate<String, String> redisTemplate,

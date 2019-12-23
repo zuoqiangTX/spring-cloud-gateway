@@ -29,6 +29,8 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.web.reactive.DispatcherHandler;
 
 /**
+ * 负载均衡自动配置类
+ *
  * @author Spencer Gibb
  */
 @Configuration
@@ -38,6 +40,12 @@ public class GatewayLoadBalancerClientAutoConfiguration {
 
 	// GlobalFilter beans
 
+	/**
+	 * 创建一个负载均衡的全局filter
+	 *
+	 * @param client
+	 * @return
+	 */
 	@Bean
 	@ConditionalOnBean(LoadBalancerClient.class)
 	@ConditionalOnMissingBean(LoadBalancerClientFilter.class)
