@@ -43,11 +43,20 @@ import java.util.function.Predicate;
 public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLocator {
 
 	/**
-	 * 注册中心client
+	 * 注册发现客户端，用于向注册中心发起请求。
 	 */
 	private final DiscoveryClient discoveryClient;
+	/**
+	 * 路由配置编号前缀，以 DiscoveryClient 类名 + _ 。
+	 */
 	private final DiscoveryLocatorProperties properties;
+	/**
+	 *
+	 */
 	private final String routeIdPrefix;
+	/**
+	 *
+	 */
 	private final SimpleEvaluationContext evalCtxt;
 
 	public DiscoveryClientRouteDefinitionLocator(DiscoveryClient discoveryClient, DiscoveryLocatorProperties properties) {
@@ -84,21 +93,24 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 			};
 		}
 
-		return Flux.fromIterable(discoveryClient.getServices())
+		return Flux.fromIterable(discoveryClient.getServices())//调用 discoveryClient 获取注册在注册中心的服务列表。
 				.map(discoveryClient::getInstances)
 				.filter(instances -> !instances.isEmpty())
 				.map(instances -> instances.get(0))
 				.filter(includePredicate)
 				.map(instance -> {
 					String serviceId = instance.getServiceId();
-
+					//设置路由定义
 					RouteDefinition routeDefinition = new RouteDefinition();
+					//设置id 等于
 					routeDefinition.setId(this.routeIdPrefix + serviceId);
+					//// 设置 URI[格式为 lb://${serviceId} ]
 					String uri = urlExpr.getValue(evalCtxt, instance, String.class);
 					routeDefinition.setUri(URI.create(uri));
 
 					final ServiceInstance instanceForEval = new DelegatingServiceInstance(instance, properties);
 
+					// 添加 Path 匹配断言
 					for (PredicateDefinition original : this.properties.getPredicates()) {
 						PredicateDefinition predicate = new PredicateDefinition();
 						predicate.setName(original.getName());
@@ -109,6 +121,7 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 						routeDefinition.getPredicates().add(predicate);
 					}
 
+					// 添加 Path 重写过滤器
 					for (FilterDefinition original : this.properties.getFilters()) {
 						FilterDefinition filter = new FilterDefinition();
 						filter.setName(original.getName());
