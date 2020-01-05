@@ -17,30 +17,45 @@
 
 package org.springframework.cloud.gateway.handler.predicate;
 
+import org.springframework.cloud.gateway.support.NameUtils;
+import org.springframework.validation.annotation.Validated;
+
+import javax.validation.ValidationException;
+import javax.validation.constraints.NotNull;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 
-import javax.validation.ValidationException;
-import javax.validation.constraints.NotNull;
-
-import org.springframework.cloud.gateway.support.NameUtils;
-import org.springframework.validation.annotation.Validated;
-
 import static org.springframework.util.StringUtils.tokenizeToStringArray;
 
 /**
+ * 路由断言
+ * 请求通过 predicates 判断是否匹配
+ *
  * @author Spencer Gibb
  */
 @Validated
 public class PredicateDefinition {
 	@NotNull
+	/**
+	 * 断言名称
+	 * 通过 name 对应到 org.springframework.cloud.gateway.handler.predicate.RoutePredicateFactory 的实现类。例如说，name=Query 对应到 QueryRoutePredicateFactory 。
+	 */
 	private String name;
+	/**
+	 * 断言属性值
+	 * 例如，name=Host / args={"_genkey_0" : "iocoder.cn"} ，匹配请求的 hostname 为 iocoder.cn 。
+	 */
 	private Map<String, String> args = new LinkedHashMap<>();
 
 	public PredicateDefinition() {
 	}
 
+	/**
+	 * 参数格式为 格式为 ${name}=${args[0]},${args[1]}...${args[n]}
+	 *
+	 * @param text
+	 */
 	public PredicateDefinition(String text) {
 		int eqIdx = text.indexOf('=');
 		if (eqIdx <= 0) {
@@ -49,9 +64,9 @@ public class PredicateDefinition {
 		}
 		setName(text.substring(0, eqIdx));
 
-		String[] args = tokenizeToStringArray(text.substring(eqIdx+1), ",");
+		String[] args = tokenizeToStringArray(text.substring(eqIdx + 1), ",");
 
-		for (int i=0; i < args.length; i++) {
+		for (int i = 0; i < args.length; i++) {
 			this.args.put(NameUtils.generateName(i), args[i]);
 		}
 	}

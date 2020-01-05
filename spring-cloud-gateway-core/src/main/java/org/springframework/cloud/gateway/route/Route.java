@@ -17,15 +17,6 @@
 
 package org.springframework.cloud.gateway.route;
 
-import java.net.URI;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.function.Predicate;
-
 import org.springframework.cloud.gateway.filter.GatewayFilter;
 import org.springframework.cloud.gateway.handler.AsyncPredicate;
 import org.springframework.cloud.gateway.support.ServerWebExchangeUtils;
@@ -34,6 +25,10 @@ import org.springframework.util.Assert;
 import org.springframework.web.server.ServerWebExchange;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.net.URI;
+import java.util.*;
+import java.util.function.Predicate;
+
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.toAsyncPredicate;
 
 /**
@@ -41,6 +36,9 @@ import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.t
  */
 public class Route implements Ordered {
 
+	/**
+	 * ID 编号，唯一。
+	 */
 	private final String id;
 
 	private final URI uri;
@@ -90,7 +88,8 @@ public class Route implements Ordered {
 
 		protected List<GatewayFilter> gatewayFilters = new ArrayList<>();
 
-		protected AbstractBuilder() {}
+		protected AbstractBuilder() {
+		}
 
 		protected abstract B getThis();
 
@@ -128,7 +127,6 @@ public class Route implements Ordered {
 		}
 
 		public abstract AsyncPredicate<ServerWebExchange> getPredicate();
-
 
 
 		public B replaceFilters(List<GatewayFilter> gatewayFilters) {

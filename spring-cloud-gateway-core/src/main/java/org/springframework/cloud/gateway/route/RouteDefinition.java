@@ -17,13 +17,13 @@
 
 package org.springframework.cloud.gateway.route;
 
-import javax.validation.constraints.NotEmpty;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
 import org.springframework.cloud.gateway.handler.predicate.PredicateDefinition;
 import org.springframework.validation.annotation.Validated;
 
 import javax.validation.Valid;
 import javax.validation.ValidationException;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.net.URI;
 import java.util.ArrayList;
@@ -39,22 +39,45 @@ import static org.springframework.util.StringUtils.tokenizeToStringArray;
 @Validated
 public class RouteDefinition {
 	@NotEmpty
+	/**
+	 * ID 编号，唯一。
+	 */
 	private String id = UUID.randomUUID().toString();
 
 	@NotEmpty
 	@Valid
+	/**
+	 * 路由断言
+	 * 请求通过 predicates 判断是否匹配。在 Route 里，PredicateDefinition 转换成 Predicate 。
+	 */
 	private List<PredicateDefinition> predicates = new ArrayList<>();
 
 	@Valid
+	/**
+	 * 过滤器数组
+	 * 在 Route 里，FilterDefinition 转换成 GatewayFilter 。
+	 */
 	private List<FilterDefinition> filters = new ArrayList<>();
 
 	@NotNull
+	/**
+	 * 路由向的 URI 。
+	 */
 	private URI uri;
 
+	/**
+	 * order 属性，顺序。当请求匹配到多个路由时，使用顺序小的。
+	 */
 	private int order = 0;
 
-	public RouteDefinition() {}
+	public RouteDefinition() {
+	}
 
+	/**
+	 * 格式  ${id}=${uri},${predicates[0]},${predicates[1]}...${predicates[n]}
+	 *
+	 * @param text
+	 */
 	public RouteDefinition(String text) {
 		int eqIdx = text.indexOf('=');
 		if (eqIdx <= 0) {
@@ -62,13 +85,16 @@ public class RouteDefinition {
 					", must be of the form name=value");
 		}
 
+		//第一个字符串为id
 		setId(text.substring(0, eqIdx));
 
-		String[] args = tokenizeToStringArray(text.substring(eqIdx+1), ",");
+		//第二个字符串是uri
+		String[] args = tokenizeToStringArray(text.substring(eqIdx + 1), ",");
 
 		setUri(URI.create(args[0]));
 
-		for (int i=1; i < args.length; i++) {
+		//第三个以后的字符串是断言数组
+		for (int i = 1; i < args.length; i++) {
 			this.predicates.add(new PredicateDefinition(args[i]));
 		}
 	}

@@ -17,12 +17,6 @@
 
 package org.springframework.cloud.gateway.discovery;
 
-import java.net.URI;
-import java.util.Map;
-import java.util.function.Predicate;
-
-import reactor.core.publisher.Flux;
-
 import org.springframework.cloud.client.ServiceInstance;
 import org.springframework.cloud.client.discovery.DiscoveryClient;
 import org.springframework.cloud.gateway.filter.FilterDefinition;
@@ -34,13 +28,23 @@ import org.springframework.expression.Expression;
 import org.springframework.expression.spel.standard.SpelExpressionParser;
 import org.springframework.expression.spel.support.SimpleEvaluationContext;
 import org.springframework.util.StringUtils;
+import reactor.core.publisher.Flux;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.function.Predicate;
 
 /**
+ * ，从注册中心( 例如，Eureka / Consul / Zookeeper / Etcd 等 )读取路由配置
  * TODO: change to RouteLocator? use java dsl
+ *
  * @author Spencer Gibb
  */
 public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLocator {
 
+	/**
+	 * 注册中心client
+	 */
 	private final DiscoveryClient discoveryClient;
 	private final DiscoveryLocatorProperties properties;
 	private final String routeIdPrefix;
@@ -88,8 +92,8 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 				.map(instance -> {
 					String serviceId = instance.getServiceId();
 
-                    RouteDefinition routeDefinition = new RouteDefinition();
-                    routeDefinition.setId(this.routeIdPrefix + serviceId);
+					RouteDefinition routeDefinition = new RouteDefinition();
+					routeDefinition.setId(this.routeIdPrefix + serviceId);
 					String uri = urlExpr.getValue(evalCtxt, instance, String.class);
 					routeDefinition.setUri(URI.create(uri));
 
@@ -105,9 +109,9 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 						routeDefinition.getPredicates().add(predicate);
 					}
 
-                    for (FilterDefinition original : this.properties.getFilters()) {
-                    	FilterDefinition filter = new FilterDefinition();
-                    	filter.setName(original.getName());
+					for (FilterDefinition original : this.properties.getFilters()) {
+						FilterDefinition filter = new FilterDefinition();
+						filter.setName(original.getName());
 						for (Map.Entry<String, String> entry : original.getArgs().entrySet()) {
 							String value = getValueFromExpr(evalCtxt, parser, instanceForEval, entry);
 							filter.addArg(entry.getKey(), value);
@@ -115,7 +119,7 @@ public class DiscoveryClientRouteDefinitionLocator implements RouteDefinitionLoc
 						routeDefinition.getFilters().add(filter);
 					}
 
-                    return routeDefinition;
+					return routeDefinition;
 				});
 	}
 

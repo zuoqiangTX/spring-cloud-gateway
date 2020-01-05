@@ -20,6 +20,10 @@ package org.springframework.cloud.gateway.route;
 import reactor.core.publisher.Flux;
 
 /**
+ * 直接定义路由，不需要像RouteDefinitionLocator一样RouteDefinition转换为route
+ * <p>
+ * 对于上层调用者 RoutePredicateHandlerMapping使用的是RouteLocator 和Route
+ *
  * @author Spencer Gibb
  */
 //TODO: rename to Routes?

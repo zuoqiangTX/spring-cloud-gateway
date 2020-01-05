@@ -17,19 +17,21 @@
 
 package org.springframework.cloud.gateway.route;
 
+import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
+import org.springframework.context.event.EventListener;
+import reactor.cache.CacheFlux;
+import reactor.core.publisher.Flux;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import reactor.cache.CacheFlux;
-import reactor.core.publisher.Flux;
-
-import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
-import org.springframework.context.event.EventListener;
-
 /**
+ * 已经被CachingRouteLocator 取代
+ *
  * @author Spencer Gibb
  */
+@Deprecated
 public class CachingRouteDefinitionLocator implements RouteDefinitionLocator {
 
 	private final RouteDefinitionLocator delegate;
@@ -50,6 +52,7 @@ public class CachingRouteDefinitionLocator implements RouteDefinitionLocator {
 
 	/**
 	 * Clears the cache of routeDefinisions
+	 *
 	 * @return routeDefinitions flux
 	 */
 	public Flux<RouteDefinition> refresh() {
@@ -58,7 +61,7 @@ public class CachingRouteDefinitionLocator implements RouteDefinitionLocator {
 	}
 
 	@EventListener(RefreshRoutesEvent.class)
-    /* for testing */ void handleRefresh() {
-        refresh();
-    }
+		/* for testing */ void handleRefresh() {
+		refresh();
+	}
 }
