@@ -17,31 +17,47 @@
 
 package org.springframework.cloud.gateway.route;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.springframework.cloud.gateway.support.NotFoundException;
-
-import static java.util.Collections.synchronizedMap;
-
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static java.util.Collections.synchronizedMap;
+
 /**
+ * 基于内存为存储器的 RouteDefinitionLocator
+ *
  * @author Spencer Gibb
  */
 public class InMemoryRouteDefinitionRepository implements RouteDefinitionRepository {
 
+	/**
+	 * 使用一个LinkedHashMap作为一个路由存储
+	 */
 	private final Map<String, RouteDefinition> routes = synchronizedMap(new LinkedHashMap<String, RouteDefinition>());
 
+	/**
+	 * 保存路由
+	 *
+	 * @param route
+	 * @return
+	 */
 	@Override
 	public Mono<Void> save(Mono<RouteDefinition> route) {
-		return route.flatMap( r -> {
+		return route.flatMap(r -> {
 			routes.put(r.getId(), r);
 			return Mono.empty();
 		});
 	}
 
+	/**
+	 * 删除路由
+	 *
+	 * @param routeId
+	 * @return
+	 */
 	@Override
 	public Mono<Void> delete(Mono<String> routeId) {
 		return routeId.flatMap(id -> {
@@ -49,10 +65,15 @@ public class InMemoryRouteDefinitionRepository implements RouteDefinitionReposit
 				routes.remove(id);
 				return Mono.empty();
 			}
-			return Mono.defer(() -> Mono.error(new NotFoundException("RouteDefinition not found: "+routeId)));
+			return Mono.defer(() -> Mono.error(new NotFoundException("RouteDefinition not found: " + routeId)));
 		});
 	}
 
+	/**
+	 * 获取路由列表
+	 *
+	 * @return
+	 */
 	@Override
 	public Flux<RouteDefinition> getRouteDefinitions() {
 		return Flux.fromIterable(routes.values());

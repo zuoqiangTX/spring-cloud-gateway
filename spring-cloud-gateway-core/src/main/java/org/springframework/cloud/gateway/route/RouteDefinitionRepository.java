@@ -19,6 +19,8 @@ package org.springframework.cloud.gateway.route;
 
 /**
  * 从从存储器( 例如，内存 / Redis / MySQL 等 )读取
+ * <p>
+ * 目前 Spring Cloud Gateway 实现了基于内存为存储器的 InMemoryRouteDefinitionRepository 。
  *
  * @author Spencer Gibb
  */

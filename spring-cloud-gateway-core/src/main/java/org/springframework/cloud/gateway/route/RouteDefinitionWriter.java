@@ -20,11 +20,26 @@ package org.springframework.cloud.gateway.route;
 import reactor.core.publisher.Mono;
 
 /**
+ * 路由配置写入接口
+ *
  * @author Spencer Gibb
  */
 public interface RouteDefinitionWriter {
 
+	/**
+	 * 保存路由定义
+	 *
+	 * @param route
+	 * @return
+	 */
 	Mono<Void> save(Mono<RouteDefinition> route);
 
+
+	/**
+	 * 删除路由定义
+	 *
+	 * @param routeId
+	 * @return
+	 */
 	Mono<Void> delete(Mono<String> routeId);
 }

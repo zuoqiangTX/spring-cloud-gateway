@@ -238,6 +238,9 @@ public class GatewayAutoConfiguration {
 	 * @return
 	 */
 	@Bean
+	/**
+	 * 当我们自己没有定义的时候，才使用系统自定义内存级别的路由缓存，所以我们可以通过此时我们可以实现 RouteDefinitionRepository 接口，以实现自定义路由
+	 */
 	@ConditionalOnMissingBean(RouteDefinitionRepository.class)
 	public InMemoryRouteDefinitionRepository inMemoryRouteDefinitionRepository() {
 		return new InMemoryRouteDefinitionRepository();
