@@ -76,6 +76,12 @@ public class GatewayControllerEndpoint implements ApplicationEventPublisherAware
 
 	// TODO: Add uncommited or new but not active routes endpoint
 
+	/**
+	 * ApplicationEventPublisher ，发布 RefreshRoutesEvent 事件。
+	 * /refresh ，发布 RefreshRoutesEvent 事件。CachingRouteLocator 监听到该事件，刷新缓存。
+	 *
+	 * @return
+	 */
 	@PostMapping("/refresh")
 	public Mono<Void> refresh() {
 		this.publisher.publishEvent(new RefreshRoutesEvent(this));

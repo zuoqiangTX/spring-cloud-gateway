@@ -17,18 +17,19 @@
 
 package org.springframework.cloud.gateway.route;
 
+import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.AnnotationAwareOrderComparator;
+import reactor.cache.CacheFlux;
+import reactor.core.publisher.Flux;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import reactor.cache.CacheFlux;
-import reactor.core.publisher.Flux;
-
-import org.springframework.cloud.gateway.event.RefreshRoutesEvent;
-import org.springframework.context.event.EventListener;
-import org.springframework.core.annotation.AnnotationAwareOrderComparator;
-
 /**
+ * 缓存路由的 RouteLocator 实现类
+ *
  * @author Spencer Gibb
  */
 public class CachingRouteLocator implements RouteLocator {
@@ -43,6 +44,11 @@ public class CachingRouteLocator implements RouteLocator {
 				.onCacheMissResume(() -> this.delegate.getRoutes().sort(AnnotationAwareOrderComparator.INSTANCE));
 	}
 
+	/**
+	 * 返回路由缓存。
+	 *
+	 * @return
+	 */
 	@Override
 	public Flux<Route> getRoutes() {
 		return this.routes;
@@ -50,6 +56,9 @@ public class CachingRouteLocator implements RouteLocator {
 
 	/**
 	 * Clears the routes cache
+	 * <p>
+	 * 刷新缓存 cachedRoutes 属性。
+	 *
 	 * @return routes flux
 	 */
 	public Flux<Route> refresh() {
@@ -57,6 +66,9 @@ public class CachingRouteLocator implements RouteLocator {
 		return this.routes;
 	}
 
+	/**
+	 * 监听 org.springframework.context.ApplicationEvent.RefreshRoutesEvent事件，刷新缓存。
+	 */
 	@EventListener(RefreshRoutesEvent.class)
 	/* for testing */ void handleRefresh() {
 		refresh();

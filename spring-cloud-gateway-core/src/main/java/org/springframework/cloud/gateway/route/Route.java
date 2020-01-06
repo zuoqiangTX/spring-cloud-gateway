@@ -32,6 +32,8 @@ import java.util.function.Predicate;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.toAsyncPredicate;
 
 /**
+ * 路由
+ *
  * @author Spencer Gibb
  */
 public class Route implements Ordered {
@@ -41,10 +43,19 @@ public class Route implements Ordered {
 	 */
 	private final String id;
 
+	/**
+	 * uri 属性，路由向的 URI 。
+	 */
 	private final URI uri;
 
+	/**
+	 * order 属性，顺序。当请求匹配到多个路由时，使用顺序小的。
+	 */
 	private final int order;
 
+	/**
+	 * 断言 predicates 属性  请求通过 predicates 判断是否匹配。
+	 */
 	private final AsyncPredicate<ServerWebExchange> predicate;
 
 	private final List<GatewayFilter> gatewayFilters;
