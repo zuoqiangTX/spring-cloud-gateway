@@ -16,18 +16,18 @@
 
 package org.springframework.cloud.gateway.route.builder;
 
+import org.springframework.cloud.gateway.route.Route;
+import org.springframework.cloud.gateway.route.RouteLocator;
+import org.springframework.context.ConfigurableApplicationContext;
+import reactor.core.publisher.Flux;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.Function;
 
-import org.springframework.cloud.gateway.route.Route;
-import org.springframework.cloud.gateway.route.RouteLocator;
-import org.springframework.context.ConfigurableApplicationContext;
-
-import reactor.core.publisher.Flux;
-
 /**
+ * 用于创建 RouteLocator 相关的各个元素
  * Used to build a {@link RouteLocator}
  */
 public class RouteLocatorBuilder {
@@ -40,6 +40,7 @@ public class RouteLocatorBuilder {
 
 	/**
 	 * Creates a new {@link Builder}
+	 *
 	 * @return a new {@link Builder}
 	 */
 	public Builder routes() {
@@ -60,6 +61,7 @@ public class RouteLocatorBuilder {
 
 		/**
 		 * Creates a new {@link Route}
+		 *
 		 * @param id the unique id for the route
 		 * @param fn a function which takes in a {@link PredicateSpec} and returns a {@link Route.AsyncBuilder}
 		 * @return a {@link Builder}
@@ -72,6 +74,7 @@ public class RouteLocatorBuilder {
 
 		/**
 		 * Creates a new {@link Route}
+		 *
 		 * @param fn a function which takes in a {@link PredicateSpec} and returns a {@link Route.AsyncBuilder}
 		 * @return a {@link Builder}
 		 */
@@ -83,6 +86,7 @@ public class RouteLocatorBuilder {
 
 		/**
 		 * Builds and returns a {@link RouteLocator}
+		 *
 		 * @return a {@link RouteLocator}
 		 */
 		public RouteLocator build() {

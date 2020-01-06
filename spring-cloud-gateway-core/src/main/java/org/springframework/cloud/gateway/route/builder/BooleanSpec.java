@@ -16,24 +16,25 @@
 
 package org.springframework.cloud.gateway.route.builder;
 
-import java.util.function.Function;
-import java.util.function.Predicate;
-
 import org.springframework.cloud.gateway.handler.AsyncPredicate;
 import org.springframework.cloud.gateway.route.Route;
 import org.springframework.util.Assert;
 import org.springframework.web.server.ServerWebExchange;
+
+import java.util.function.Function;
+import java.util.function.Predicate;
 
 import static org.springframework.cloud.gateway.route.builder.BooleanSpec.Operator.AND;
 import static org.springframework.cloud.gateway.route.builder.BooleanSpec.Operator.OR;
 import static org.springframework.cloud.gateway.support.ServerWebExchangeUtils.toAsyncPredicate;
 
 /**
+ * 用于创建 逻辑 相关的各个元素
  * A spec used to apply logical operators.
  */
 public class BooleanSpec extends UriSpec {
 
-	enum Operator { AND, OR, NEGATE }
+	enum Operator {AND, OR, NEGATE}
 
 	final AsyncPredicate<ServerWebExchange> predicate;
 
@@ -45,6 +46,7 @@ public class BooleanSpec extends UriSpec {
 
 	/**
 	 * Apply logical {@code and} operator.
+	 *
 	 * @return a {@link BooleanSpec} to be used to add logical operators
 	 */
 	public BooleanOpSpec and() {
@@ -53,6 +55,7 @@ public class BooleanSpec extends UriSpec {
 
 	/**
 	 * Apply logical {@code or} operator.
+	 *
 	 * @return a {@link BooleanSpec} to be used to add logical operators
 	 */
 	public BooleanOpSpec or() {
@@ -61,6 +64,7 @@ public class BooleanSpec extends UriSpec {
 
 	/**
 	 * Negate the logical operator.
+	 *
 	 * @return a {@link BooleanSpec} to be used to add logical operators
 	 */
 	public BooleanSpec negate() {
@@ -70,6 +74,7 @@ public class BooleanSpec extends UriSpec {
 
 	/**
 	 * Add filters to the route definition.
+	 *
 	 * @param fn A {@link Function} that takes in a {@link GatewayFilterSpec} and returns a {@link UriSpec}
 	 * @return a {@link UriSpec}
 	 */
@@ -88,7 +93,7 @@ public class BooleanSpec extends UriSpec {
 		}
 
 		public BooleanSpec predicate(Predicate<ServerWebExchange> predicate) {
-		    return asyncPredicate(toAsyncPredicate(predicate));
+			return asyncPredicate(toAsyncPredicate(predicate));
 		}
 
 		@Override
